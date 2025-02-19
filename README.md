@@ -67,9 +67,8 @@ skyops/
 ├── requirements.txt
 ├── README.md
 └── LICENSE
-    </pre>
 
-    <h2>High-Level System Architecture</h2>
+<h2>High-Level System Architecture</h2>
     <p>The SkyOps system architecture follows a modular design for seamless UAV control and telemetry processing.</p>
     <ul>
         <li><strong>Ground Control Station (GCS)</strong>: User interface for mission planning, telemetry visualization, and control.</li>
@@ -99,5 +98,8 @@ skyops/
     
     <h3>UAV with Pixhawk Flight Controller</h3>
     <img src="assets/ui.jpg" alt="UAV with Pixhawk" width="600">
+    </pre>
+
+    
 </body>
 </html>
