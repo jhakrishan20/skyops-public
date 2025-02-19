@@ -77,7 +77,7 @@ skyops/
         <li><strong>Live Video Feed</strong>: Real-time video streaming from the UAV camera to the GCS.</li>
     </ul>
 
-    <h2>System Communication Flow</h2>
+<h2>System Communication Flow</h2>
     <p>The communication flow is as follows:</p>
     <ul>
         <li>The GCS sends mission commands to the Raspberry Pi.</li>
@@ -86,18 +86,18 @@ skyops/
         <li>The UAV camera streams live video to the GCS for real-time monitoring.</li>
     </ul>
 
-    <h2>Hardware Components</h2>
+<h2>Hardware Components</h2>
     <h3>Physical GCS</h3>
     <img src="assets/gcs.jpg" alt="GCS Interface" width="600">
 
-    <h3>GCS interface</h3>
+<h3>GCS interface</h3>
     <img src="assets/ui.jpg" alt="GCS Interface" width="600">
     
-    <h3>Raspberry Pi Communication Module</h3>
+<h3>Raspberry Pi Communication Module</h3>
     <img src="assets/rasberrypi.jpg" alt="Raspberry Pi Module" width="600">
     
-    <h3>UAV with Pixhawk Flight Controller</h3>
-    <img src="assets/ui.jpg" alt="UAV with Pixhawk" width="600">
+<h3>UAV with Pixhawk Flight Controller</h3>
+    <img src="assets/pixhawk.jpg" alt="UAV with Pixhawk" width="600">
     </pre>
 
     
