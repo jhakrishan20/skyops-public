@@ -89,15 +89,15 @@ skyops/
 
     <h2>Hardware Components</h2>
     <h3>Physical GCS</h3>
-    <img src="gcs.jpg" alt="GCS Interface" width="600">
+    <img src="assets/gcs.jpg" alt="GCS Interface" width="600">
 
     <h3>GCS interface</h3>
-    <img src="ui.jpg" alt="GCS Interface" width="600">
+    <img src="assets/ui.jpg" alt="GCS Interface" width="600">
     
     <h3>Raspberry Pi Communication Module</h3>
-    <img src="rasberrypi.jpg" alt="Raspberry Pi Module" width="600">
+    <img src="assets/rasberrypi.jpg" alt="Raspberry Pi Module" width="600">
     
     <h3>UAV with Pixhawk Flight Controller</h3>
-    <img src="ui.jpg" alt="UAV with Pixhawk" width="600">
+    <img src="assets/ui.jpg" alt="UAV with Pixhawk" width="600">
 </body>
 </html>
