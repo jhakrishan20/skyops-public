@@ -6,7 +6,7 @@ class Handler:
         self.is_connected = False
         self.mode = None
 
-    def connect(self, connection_string="COM21", baud=57600):
+    def connect(self, connection_string, baud):
         if self.vehicle is not None:  # Prevent multiple connections
             print("⚠️ Already connected.")
             return True
@@ -29,10 +29,6 @@ class Handler:
             return True
         print("❌ No active connection to disconnect.")
         return False
-    
-    def mode(self):
-        self.mode = self.vehicle.mode.name
-        return self.mode
 
     def get_vehicle_state(self):
         if not self.is_connected or not self.vehicle:

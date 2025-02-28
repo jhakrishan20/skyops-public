@@ -1,132 +1,86 @@
-from flask_socketio import  emit
+from flask_socketio import emit
 import threading
+from ui.controllers.ui_controller import UiController
 
-def register_routes(socketio, ui):
-        
-    def connection(self):
-        @socketio.on('connection')
-        def connection_route():
-            try:
-                response = self.ui.start_connection()
-                emit('connection_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+class DroneControlSocket:
+    def __init__(self, socketio):
+        self.socketio = socketio
+        self.ui = UiController()
+        self.register_routes()
 
-        @socketio.on('disconnection')
-        def disconnection_route():
-            try:
-                response = self.ui.stop_connection()
-                emit('disconnection_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def register_routes(self):
+        self.socketio.on_event('handshake', self.handshake)  
+        self.socketio.on_event('connection', self.connection_route)
+        self.socketio.on_event('disconnection', self.disconnection_route)
+        self.socketio.on_event('arm', self.arming_route)
+        self.socketio.on_event('disarm', self.disarming_route)
+        self.socketio.on_event('throttleup', self.throttle_up_route)
+        self.socketio.on_event('throttledown', self.throttle_down_route)
+        self.socketio.on_event('rollright', self.roll_right_route)
+        self.socketio.on_event('rollleft', self.roll_left_route)
+        self.socketio.on_event('pitchforward', self.pitch_forward_route)
+        self.socketio.on_event('pitchbackward', self.pitch_backward_route)
+        self.socketio.on_event('yawclock', self.yaw_clockwise_route)
+        self.socketio.on_event('yawanticlock', self.yaw_anticlockwise_route)
+        self.socketio.on_event('setalt', self.hold_alt_route)
+        self.socketio.on_event('land', self.land_route)
+        self.socketio.on_event('telemetry', self.telemetry_route)
 
-        @socketio.on('arm')
-        def arming_route():
-            try:
-                response = self.ui.start_to_arm()
-                emit('arm_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def handshake(self, data=None): 
+        print("🤝 Handshake event received from client.")
+        self.socketio.emit("handshake_response", {"message": "Handshake successful!"})  
 
-        @socketio.on('disarm')
-        def disarming_route():
-            try:
-                response = self.ui.start_to_disarm()
-                emit('disarm_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def connection_route(self, data=None):
+        self._handle_event(self.ui.start_connection, 'connection_response')
 
-        @socketio.on('throttleup')
-        def throttle_up_route():
-            try:
-                response = self.ui.start_motors()
-                emit('throttleup_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def disconnection_route(self, data=None):
+        self._handle_event(self.ui.stop_connection, 'disconnection_response')
 
-        @socketio.on('throttledown')
-        def throttle_down_route():
-            try:
-                response = self.ui.stop_motors()
-                emit('throttledown_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def arming_route(self, data=None):
+        self._handle_event(self.ui.start_to_arm, 'arm_response')
 
-        @socketio.on('rollright')
-        def roll_right_route():
-            try:
-                response = self.ui.start_roll()
-                emit('rollright_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def disarming_route(self, data=None):
+        self._handle_event(self.ui.start_to_disarm, 'disarm_response')
 
-        @socketio.on('rollleft')
-        def roll_left_route():
-            try:
-                response = self.ui.stop_roll()
-                emit('rollleft_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def throttle_up_route(self, data=None):
+        self._handle_event(self.ui.start_motors, 'throttleup_response')
 
-        @socketio.on('pitchforward')
-        def pitch_forward_route():
-            try:
-                response = self.ui.start_pitch()
-                emit('pitchforward_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def throttle_down_route(self, data=None):
+        self._handle_event(self.ui.stop_motors, 'throttledown_response')
 
-        @socketio.on('pitchbackward')
-        def pitch_backward_route():
-            try:
-                response = self.ui.stop_pitch()
-                emit('pitchbackward_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def roll_right_route(self, data=None):
+        self._handle_event(self.ui.start_roll, 'rollright_response')
 
-        @socketio.on('yawclock')
-        def yaw_clockwise_route():
-            try:
-                response = self.ui.start_yaw()
-                emit('yawclock_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def roll_left_route(self, data=None):
+        self._handle_event(self.ui.stop_roll, 'rollleft_response')
 
-        @socketio.on('yawanticlock')
-        def yaw_anticlockwise_route():
-            try:
-                response = self.ui.stop_yaw()
-                emit('yawanticlock_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def pitch_forward_route(self, data=None):
+        self._handle_event(self.ui.start_pitch, 'pitchforward_response')
 
-        @socketio.on('setalt')
-        def hold_alt_route():
-            try:
-                response = self.ui.hold_alt()
-                emit('setalt_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def pitch_backward_route(self, data=None):
+        self._handle_event(self.ui.stop_pitch, 'pitchbackward_response')
 
-        @socketio.on('land')
-        def land_route():
-            try:
-                response = self.ui.return_to_land()
-                emit('land_response', {'message': response})
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def yaw_clockwise_route(self, data=None):
+        self._handle_event(self.ui.start_yaw, 'yawclock_response')
 
-        @socketio.on('telemetry')
-        def telemetry_route():
-            try:
-                def fetch_telemetry():
-                    try:
-                        response = self.ui.show_telemetry()
-                        emit('telemetry_response', {'message': response})
-                    except Exception as e:
-                        emit('error', {'error': str(e)})
-                
-                thread = threading.Thread(target=fetch_telemetry)
-                thread.start()
-            except Exception as e:
-                emit('error', {'error': str(e)})
+    def yaw_anticlockwise_route(self, data=None):
+        self._handle_event(self.ui.stop_yaw, 'yawanticlock_response')
+
+    def hold_alt_route(self, data=None):
+        self._handle_event(self.ui.hold_alt, 'setalt_response')
+
+    def land_route(self, data=None):
+        self._handle_event(self.ui.return_to_land, 'land_response')
+
+    def telemetry_route(self, data=None):
+        threading.Thread(target=self._fetch_telemetry).start()
+
+    def _fetch_telemetry(self):
+        self._handle_event(self.ui.show_telemetry, 'telemetry_response')
+
+    def _handle_event(self, function, response_event):
+        try:
+            response = function()
+            self.socketio.emit(response_event, {'message': response})  
+        except Exception as e:
+            self.socketio.emit('error', {'error': str(e)})   

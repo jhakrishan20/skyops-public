@@ -11,7 +11,7 @@ class TelemetryModel:
             "altitude": self.vehicle.location.global_relative_frame.alt,
             "groundspeed": self.vehicle.groundspeed,
             "airspeed": self.vehicle.airspeed,
-            "climb_rate": self.vehicle.velocity[2],  # Vertical speed
+            "climbrate": self.vehicle.velocity[2],  # Vertical speed
         }
 
     # 2️⃣ Attitude & Orientation Data
@@ -28,9 +28,9 @@ class TelemetryModel:
     def get_gps_data(self):
         """Retrieve GPS-related telemetry (satellites, fix type)."""
         return {
-            "fix_type": self.vehicle.gps_0.fix_type,
+            "fixtype": self.vehicle.gps_0.fix_type,
             "satellites": self.vehicle.gps_0.satellites_visible,
-            "gps_altitude": self.vehicle.location.global_frame.alt,
+            "gpsaltitude": self.vehicle.location.global_frame.alt,
         }
 
     # 4️⃣ System Status & Mode
@@ -39,7 +39,7 @@ class TelemetryModel:
         return {
             "flight_mode": self.vehicle.mode.name,
             "armed": self.vehicle.armed,
-            "ekf_status": self.vehicle.ekf_ok,
+            "ekfstatus": self.vehicle.ekf_ok,
         }
 
     # 5️⃣ Battery & Power Data
@@ -84,6 +84,6 @@ class TelemetryModel:
                 "ch5": self.vehicle.channels.get(5, 0),
                 "ch6": self.vehicle.channels.get(6, 0),
             },
-            "signal_strength": self.vehicle.rangefinder.distance, 
+            "signalstrength": self.vehicle.rangefinder.distance, 
         }
 

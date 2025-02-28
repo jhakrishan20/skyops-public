@@ -5,6 +5,8 @@ from core.utils.portmanager import PortManager
 from mission.controls.motors import MotorControl
 from mission.planner.planner import Planner
 
+from core.config.config import config
+
 class UiController:
     def __init__(self):
         self.conn = Handler()
@@ -12,16 +14,14 @@ class UiController:
         self.control = None
         self.motors = None
         self.plan = None
-        self.is_arm = False
 
     def start_connection(self):
-        self.manager.free_port("COM7")
-        message = self.conn.connect()
+        print(config)
+        self.manager.free_port(config["serial_port"])
+        message = self.conn.connect(config["serial_port"],config["baud"])
 
         if message == True:
            self.control = Controller(self.conn.vehicle,self.conn.is_connected)
-           self.motors = MotorControl(self.conn.vehicle)
-           self.plan = Planner(self.conn.vehicle)
            print(self.conn.get_vehicle_state())
            self.is_connected = True
         else:
@@ -38,75 +38,79 @@ class UiController:
            self.control.disable_prearm_checks()
            message = self.control.arm_vehicle()
            if message == True:
-              self.is_arm = True
+              self.motors.is_arm = True
+           self.motors = MotorControl(self.conn.vehicle)
+           self.plan = Planner(self.conn.vehicle)   
            return message
 
     def start_to_disarm(self):
         if self.conn.is_connected:
-            if self.is_arm == True:
-                message = self.control.disarm_vehicle()
-                if message == True:
-                   self.is_arm = False
+            if self.motors.is_arm == True:
+               message = self.control.disarm_vehicle()
+               if message == True:
+                   self.motors.is_arm = False
+               self.motors = None   
+               self.plan = None   
             return message
             
     def start_motors(self):
         if self.conn.is_connected == True:
-           if self.is_arm == True:
+           if self.motors.is_arm == True:
               message = self.motors.throttle_up()
         return message
 
     def stop_motors(self):
         if self.conn.is_connected == True:
-           if self.is_arm == True:
+           if self.motors.is_arm == True:
               message = self.motors.throttle_down()
            return message
 
     def start_roll(self):
         if self.conn.is_connected == True:
-           if self.is_arm == True:
+           if self.motors.is_arm == True:
               message = self.motors.roll_right()
            return message
         
     def stop_roll(self):
         if self.conn.is_connected == True:
-           if self.is_arm == True:
+           if self.motors.is_arm == True:
               message = self.motors.roll_left()
            return message 
 
     def start_pitch(self):
         if self.conn.is_connected == True:
-           if self.is_arm == True:
+           if self.motors.is_arm == True:
               message = self.motors.pitch_forward()
            return message
 
     def stop_pitch(self):
         if self.conn.is_connected == True:
-           if self.is_arm == True:
+           if self.motors.is_arm == True:
               message = self.motors.pitch_backward()
            return message
 
     def start_yaw(self):
         if self.conn.is_connected == True:
-           if self.is_arm == True:
+           if self.motors.is_arm == True:
               message = self.motors.yaw_clockwise()
            return message
 
     def stop_yaw(self):
         if self.conn.is_connected == True:
-           if self.is_arm == True:
+           if self.motors.is_arm == True:
               message = self.motors.yaw_anticlockwise()
            return message               
 
     def hold_alt(self):
        if self.conn.is_connected == True:
-           if self.is_arm == True:
-              message = self.plan.hold_altitude(4)
+           if self.motors.is_arm == True:
+              message = self.plan.hold_altitude(3)
            return message
        
     def return_to_land(self):
        if self.conn.is_connected == True:
-           if self.is_arm == True:
-              message = self.plan.hold_altitude(2)
+           if self.motors.is_arm == True:
+              message = self.plan.emergency_landing()
            return message   
 
 
@@ -134,4 +138,4 @@ class UiController:
 
      return telemetry
 
-    
+   #  lets talk about the plan segment of mission planner, what are the features of this segment 

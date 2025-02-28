@@ -1,4 +1,4 @@
-from communication.mavlink.handler import Handler
+# from communication.mavlink.handler import Handler
 from dronekit import VehicleMode
 import time
 
@@ -6,33 +6,48 @@ class Controller():
     def __init__(self,vehicle,is_connected):
         self.vehicle = vehicle
         self.is_connected = is_connected
+        self.is_arm = False
 
     def arm_vehicle(self):
-        if not self.is_connected or not self.vehicle:
-            return "❌ Vehicle not connected."
-        
-        try:
-            # Switch to a mode that doesn't require GPS
-            self.vehicle.mode = VehicleMode("STABILIZE")
-            print("⏳ Switching to STABILIZE mode...")
-            while not self.vehicle.mode.name == "STABILIZE":
-                time.sleep(0.5)
+     if not self.is_connected or not self.vehicle:
+        print("❌ Vehicle not connected.")
+        return False
 
-            print("✅ Mode set to STABILIZE. Attempting to arm the vehicle...")
+     try:
+        # Switch to STABILIZE mode
+        print("⏳ Switching to STABILIZE mode...")
+        self.vehicle.mode = VehicleMode("STABILIZE")
 
-            # Arm the vehicle
-            self.vehicle.armed = True
-            while not self.vehicle.armed:
-                print("⏳ Waiting for arming...")
-                time.sleep(1)
+        timeout = 10  # Timeout for mode change
+        start_time = time.time()
+
+        while self.vehicle.mode.name != "STABILIZE":
+            if time.time() - start_time > timeout:
+                print("⚠️ Mode switch timeout: Unable to enter STABILIZE mode.")
+                return False
+            time.sleep(0.5)
+
+        print("✅ Mode set to STABILIZE. Attempting to arm the vehicle...")
+
+        # Attempt to arm the vehicle
+        self.vehicle.armed = True
+        timeout = 10  # Timeout for arming
+        start_time = time.time()
+
+        while not self.vehicle.armed:
+            if time.time() - start_time > timeout:
+                print("⚠️ Arming timeout: Unable to arm the vehicle.")
+                return False
             
-            print("✅ Vehicle armed successfully.")
-            return True
+            print("⏳ Waiting for arming...")
+            time.sleep(1)
 
-        except Exception as e:
-            print(f"❌ Arming failed: {e}")
-            return False
+        print("✅ Vehicle armed successfully.")
+        return True
 
+     except Exception as e:
+        print(f"❌ Arming failed: {e}")
+        return False
 
     def disarm_vehicle(self):
         if not self.is_connected or not self.vehicle:

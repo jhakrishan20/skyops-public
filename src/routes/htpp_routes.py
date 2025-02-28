@@ -31,7 +31,8 @@ class Ui_Routes:
 
     def connection_route(self):
         try:
-            response = self.ui.start_connection() 
+            response = self.ui.start_connection()
+            # print(self.ui.start_listening()) 
             return jsonify({'message': response}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 500
